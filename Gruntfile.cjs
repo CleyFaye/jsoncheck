@@ -16,7 +16,14 @@ module.exports = grunt => {
         LIB_DIR,
       ],
     },
-    "ts": {"lib": {tsconfig: "./tsconfig.json"}},
+    "ts": {
+      "lib": {
+        tsconfig: {
+          tsconfig: "./",
+          passThrough: true,
+        },
+      },
+    },
   });
 
   grunt.registerTask(
