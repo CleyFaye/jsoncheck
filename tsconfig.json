@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2020",
+    "module": "ESNEXT",
+    "lib": ["ES2020", "DOM"],
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    "removeComments": false,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  },
+  "include": [
+    "./src/**/*.ts"
+  ]
+}

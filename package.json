@@ -1,0 +1,41 @@
+{
+  "name": "@cley_faye/jsoncheck",
+  "version": "0.1.0",
+  "description": "Check if a buffer starts like a JSON",
+  "main": "lib/json.js",
+  "type": "module",
+  "files": [
+    "lib/**/*",
+    "!lib/**/*.map"
+  ],
+  "scripts": {
+    "grunt": "npx grunt --gruntfile Gruntfile.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CleyFaye/jsoncheck.git"
+  },
+  "keywords": [
+    "JSON",
+    "check"
+  ],
+  "author": "Gabriel Paul \"Cley Faye\" Risterucci",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CleyFaye/jsoncheck/issues"
+  },
+  "homepage": "https://github.com/CleyFaye/jsoncheck#readme",
+  "devDependencies": {
+    "@keeex/eslint-config": "^1.4.1",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "grunt": "^1.4.1",
+    "grunt-banner": "^0.6.0",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-ts": "^6.0.0-beta.22",
+    "gruntfile": "^0.1.0",
+    "typescript": "^4.3.2"
+  }
+}
