@@ -2,10 +2,10 @@ export enum ValueType {
   object = "object",
   string = "string",
   number = "number",
-  Array = "Array",
+  array = "array",
   boolean = "boolean",
   null = "null",
-};
+}
 
 interface ParseStatus {
   input: Uint8Array;
@@ -43,19 +43,16 @@ const getInput = (
     return new Uint8Array(input);
   }
   return new TextEncoder().encode(input);
-}
+};
 
 const isWhitespace = (chr: number): boolean => whitespace.includes(chr);
 const isStringStart = (chr: number): boolean => chr === doubleQuote;
 const isNumberStart = (chr: number): boolean => numberStart.includes(chr);
 const isObjectStart = (chr: number): boolean => chr === brackets[0];
-const isObjectEnd = (chr: number): boolean => chr === brackets[1];
 const isArrayStart = (chr: number): boolean => chr === squareBrackets[0];
 const isTrueStart = (chr: number): boolean => chr === trueChr[0];
 const isFalseStart = (chr: number): boolean => chr === falseChr[0];
 const isNullStart = (chr: number): boolean => chr === nullChr[0];
-const isComma = (chr: number): boolean => chr === commaChr;
-const isSemicolon = (chr: number): boolean => chr === semicolonChr;
 const isExponent = (chr: number): boolean => exponentChr.includes(chr);
 
 /** Return the next char */
@@ -74,29 +71,43 @@ const getNextChar = (
     return chr;
   }
   return null;
-}
+};
 
 const readWord = (state: ParseStatus, word: Array<number>): boolean => {
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < word.length; ++i) {
     const chr = getNextChar(state, false, false);
     if (chr === null) return true;
     if (chr !== word[i]) return false;
   }
   return true;
-}
+};
 
-const readFalse = (state: ParseStatus): boolean => readWord(state, falseChr);
-const readTrue = (state: ParseStatus): boolean => readWord(state, trueChr);
-const readNull = (state: ParseStatus): boolean => readWord(state, nullChr);
+const readFalse = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.boolean;
+  return readWord(state, falseChr);
+};
+
+const readTrue = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.boolean;
+  return readWord(state, trueChr);
+};
+
+const readNull = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.null;
+  return readWord(state, nullChr);
+};
 
 const readArray = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.array;
   let chr = getNextChar(state, false, false);
   if (chr === null) return true;
   if (chr !== squareBrackets[0]) return false;
-  while (true) {
+  while (state.cursor < state.input.byteLength) {
     chr = getNextChar(state, true, true);
     if (chr === null) return true;
     if (chr === squareBrackets[1]) break;
+    // eslint-disable-next-line no-use-before-define
     if (!readValue(state)) return false;
     chr = getNextChar(state, true, true);
     if (chr !== commaChr) break;
@@ -110,6 +121,7 @@ const readArray = (state: ParseStatus): boolean => {
 };
 
 const readNumber = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.number;
   let chr = getNextChar(state, false, false);
   if (chr === numberStart[0]) {
     chr = getNextChar(state, false, false);
@@ -148,16 +160,19 @@ const readNumber = (state: ParseStatus): boolean => {
     --state.cursor;
   }
   return true;
-}
+};
+
+const CONTROL_CHAR_MAX = 31;
 
 const readString = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.string;
   let chr = getNextChar(state, false, false);
   if (chr === null) return true;
   if (chr !== doubleQuote) return false;
-  while (true) {
+  while (state.cursor < state.input.byteLength) {
     chr = getNextChar(state, false, false);
     if (chr === null) return true;
-    if (chr < 32) return false;
+    if (chr <= CONTROL_CHAR_MAX) return false;
     if (chr === backslash) {
       chr = getNextChar(state, false, false);
       if (chr === null) return true;
@@ -174,25 +189,28 @@ const readString = (state: ParseStatus): boolean => {
         continue;
       }
     }
-    if (chr === doubleQuote) return true;
+    if (chr === doubleQuote) break;
   }
-}
+  return true;
+};
 
 const readObject = (state: ParseStatus): boolean => {
+  if (!state.topLevel) state.topLevel = ValueType.object;
   let chr = getNextChar(state, true, false);
   if (chr === null) return true;
   if (chr !== brackets[0]) return false;
-  while (true) {
+  while (state.cursor < state.input.byteLength) {
     chr = getNextChar(state, true, true);
     if (chr === brackets[1] || chr === null) break;
     if (!readString(state)) return false;
     chr = getNextChar(state, true, false);
     if (chr === null) return true;
     if (chr !== semicolonChr) return false;
+    // eslint-disable-next-line no-use-before-define
     if (!readValue(state)) return false;
     chr = getNextChar(state, true, true);
     if (chr === null) return true;
-    if (chr !== commaChr) return false;
+    if (chr !== commaChr) break;
     // Eat the comma
     getNextChar(state, true, false);
   }
@@ -213,26 +231,23 @@ const readValue = (state: ParseStatus): boolean => {
   if (isFalseStart(nextChr)) return readFalse(state);
   if (isNullStart(nextChr)) return readNull(state);
   return false;
-}
+};
 
 const readTopLevel = (input: Uint8Array): ValueType | null => {
   const state: ParseStatus = {
     input,
     cursor: 0,
   };
-  if (
-    !readValue(state)) {
+  if (!readValue(state)) {
     return null;
   }
   if (!state.topLevel) {
     return null;
   }
   return state.topLevel;
-}
+};
 
 /** Check that the given input looks like a valid JSON input */
 export const checkJSONStart = (
   input: Uint8Array | ArrayBuffer | string,
-): ValueType | null => {
-  return readTopLevel(getInput(input));
-};
+): ValueType | null => readTopLevel(getInput(input));
