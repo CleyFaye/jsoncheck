@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    ".tsbuildinfo": true,
+    ".tscache": true,
+    ".vscode": true,
+    "lib": true,
+    "node_modules": true
+  }
+}
