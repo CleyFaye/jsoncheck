@@ -92,7 +92,12 @@ export const readNumber = (state: ParseStatus): boolean => {
   }
   if (chr === null) return true;
   // Read integer part
-  if (!isZero(chr)) {
+  if (isZero(chr)) {
+    chr = getNextChar(state, false, false);
+    if (chr === null) return true;
+    if (isDigit(chr)) return false;
+  } else {
+    if (!isDigit(chr)) return false;
     while (isDigit(chr)) {
       chr = getNextChar(state, false, false);
       if (chr === null) return true;
