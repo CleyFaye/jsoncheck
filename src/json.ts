@@ -147,10 +147,11 @@ const readString = (state: ParseStatus): boolean => {
         const chr4 = getNextChar(state, false, false);
         for (const chrCheck of [chr1, chr2, chr3, chr4]) {
           if (chrCheck === null) return true;
-          if (!isHexDigit(chr)) return false;
+          if (!isHexDigit(chrCheck)) return false;
         }
         continue;
       }
+      return false;
     }
     if (isDoublequote(chr)) break;
   }
