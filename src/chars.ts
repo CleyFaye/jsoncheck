@@ -2,7 +2,7 @@ import {
   falseWord,
   nullWord,
   trueWord,
-} from "./words";
+} from "./words.js";
 
 // All valid whitespaces
 const whitespace = [" ", "\r", "\n", "\t"].map(c => c.charCodeAt(0));
