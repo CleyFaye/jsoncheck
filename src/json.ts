@@ -61,16 +61,19 @@ export const readArray = (state: ParseStatus): boolean => {
   let chr = getNextChar(state, false, false);
   if (chr === null) return true;
   if (!isSquareBracketStart(chr)) return false;
-  while (state.cursor < state.input.byteLength) {
-    chr = getNextChar(state, true, true);
-    if (chr === null) return true;
-    if (isSquareBracketEnd(chr)) break;
-    // eslint-disable-next-line no-use-before-define
-    if (!readValue(state)) return false;
-    chr = getNextChar(state, true, true);
-    if (chr === null || !isComma(chr)) break;
-    // Eat the coma
-    getNextChar(state, true, false);
+  chr = getNextChar(state, true, true);
+  if (chr === null) return true;
+  if (!isSquareBracketEnd(chr)) {
+    while (state.cursor < state.input.byteLength) {
+      chr = getNextChar(state, true, true);
+      if (chr === null) return true;
+      // eslint-disable-next-line no-use-before-define
+      if (!readValue(state)) return false;
+      chr = getNextChar(state, true, true);
+      if (chr === null || !isComma(chr)) break;
+      // Eat the coma
+      getNextChar(state, true, false);
+    }
   }
   chr = getNextChar(state, true, false);
   if (chr === null) return true;
@@ -160,20 +163,24 @@ const readObject = (state: ParseStatus): boolean => {
   let chr = getNextChar(state, true, false);
   if (chr === null) return true;
   if (!isBracketStart(chr)) return false;
-  while (state.cursor < state.input.byteLength) {
-    chr = getNextChar(state, true, true);
-    if (chr === null || isBracketEnd(chr)) break;
-    if (!readString(state)) return false;
-    chr = getNextChar(state, true, false);
-    if (chr === null) return true;
-    if (!isSemicolon(chr)) return false;
-    // eslint-disable-next-line no-use-before-define
-    if (!readValue(state)) return false;
-    chr = getNextChar(state, true, true);
-    if (chr === null) return true;
-    if (!isComma(chr)) break;
-    // Eat the comma
-    getNextChar(state, true, false);
+  chr = getNextChar(state, true, true);
+  if (chr === null) return true;
+  if (!isBracketEnd(chr)) {
+    while (state.cursor < state.input.byteLength) {
+      chr = getNextChar(state, true, true);
+      if (chr === null) return true;
+      if (!readString(state)) return false;
+      chr = getNextChar(state, true, false);
+      if (chr === null) return true;
+      if (!isSemicolon(chr)) return false;
+      // eslint-disable-next-line no-use-before-define
+      if (!readValue(state)) return false;
+      chr = getNextChar(state, true, true);
+      if (chr === null) return true;
+      if (!isComma(chr)) break;
+      // Eat the comma
+      getNextChar(state, true, false);
+    }
   }
   chr = getNextChar(state, true, false);
   return chr === null || isBracketEnd(chr);
