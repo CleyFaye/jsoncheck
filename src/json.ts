@@ -132,7 +132,7 @@ export const readNumber = (state: ParseStatus): boolean => {
 };
 
 /** Read a string */
-const readString = (state: ParseStatus): boolean => {
+export const readString = (state: ParseStatus): boolean => {
   if (!state.topLevel) state.topLevel = ValueType.string;
   let chr = getNextChar(state, false, false);
   if (chr === null) return true;
@@ -164,7 +164,7 @@ const readString = (state: ParseStatus): boolean => {
 };
 
 /** Read a full object */
-const readObject = (state: ParseStatus): boolean => {
+export const readObject = (state: ParseStatus): boolean => {
   if (!state.topLevel) state.topLevel = ValueType.object;
   let chr = getNextChar(state, true, false);
   if (chr === null) return true;
@@ -193,7 +193,7 @@ const readObject = (state: ParseStatus): boolean => {
 };
 
 /** Read any valid value */
-const readValue = (state: ParseStatus): boolean => {
+export const readValue = (state: ParseStatus): boolean => {
   const nextChr = getNextChar(state, true, true);
   if (nextChr === null) {
     return true;
@@ -209,7 +209,7 @@ const readValue = (state: ParseStatus): boolean => {
 };
 
 /** Start reading a JSON from the beginning */
-const readTopLevel = (input: Uint8Array): ValueType | null => {
+export const readTopLevel = (input: Uint8Array): ValueType | null => {
   const state: ParseStatus = {
     input,
     cursor: 0,
