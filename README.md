@@ -35,3 +35,10 @@ console.log(res);
 ```
 
 Should output `"object"`.
+
+Tests
+-----
+Very basic tests, to make sure each function at least do what it's supposed to do.
+The actual test command is a bit off, the current situation surrounding modules, TypeScript and
+instrumentations tools is a bit complex.
+Once it's more stable, I'll add back `nyc`.
