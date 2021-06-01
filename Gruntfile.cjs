@@ -1,4 +1,15 @@
 const loadGruntTasks = require("load-grunt-tasks");
+const {readFileSync} = require("fs");
+
+const getLicenseJS = () => [
+  "/**",
+  " * @preserve",
+  " * @license",
+  ...readFileSync("./LICENSE", "utf8")
+    .split("\n")
+    .map(c => ` * ${c}`),
+  " */",
+].join("\n");
 
 const LIB_DIR = "lib";
 
@@ -24,12 +35,23 @@ module.exports = grunt => {
         },
       },
     },
+    "usebanner": {
+      options: {banner: getLicenseJS()},
+      lib: {
+        files: [{
+          cwd: LIB_DIR,
+          expand: true,
+          src: ["**/*.js"],
+        }],
+      },
+    },
   });
 
   grunt.registerTask(
     "build",
     [
       "ts:lib",
+      "usebanner:lib",
     ],
   );
 

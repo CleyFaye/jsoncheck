@@ -6,11 +6,13 @@
   "type": "module",
   "files": [
     "lib/**/*",
+    "!**/*.test.*",
     "!lib/**/*.map"
   ],
   "scripts": {
-    "grunt": "npx grunt --gruntfile Gruntfile.cjs",
-    "test": "npm run grunt -- clean && NODE_ENV=test node --loader ts-node/esm node_modules/mocha/lib/cli/cli.js src/**/*.test.ts"
+    "grunt": "npm exec grunt -- --gruntfile Gruntfile.cjs",
+    "test": "npm run grunt -- clean && NODE_ENV=test node --loader ts-node/esm node_modules/mocha/lib/cli/cli.js src/**/*.test.ts",
+    "prepack": "npm run grunt -- clean build"
   },
   "repository": {
     "type": "git",
