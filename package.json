@@ -10,22 +10,7 @@
   ],
   "scripts": {
     "grunt": "npx grunt --gruntfile Gruntfile.cjs",
-    "test": "npm run grunt -- clean && NODE_ENV=test npx --node-arg --loader --node-arg ts-node/esm node_modules/mocha/lib/cli/cli.js src/**/*.test.ts"
-  },
-  "nyc": {
-    "require": [
-      "ts-node/register"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*"
-    ],
-    "exclude": [
-      "src/**/*.test.ts"
-    ],
-    "all": true
+    "test": "npm run grunt -- clean && NODE_ENV=test node --loader ts-node/esm node_modules/mocha/lib/cli/cli.js src/**/*.test.ts"
   },
   "repository": {
     "type": "git",
