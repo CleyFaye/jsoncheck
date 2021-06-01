@@ -1,6 +1,6 @@
 {
   "name": "@cley_faye/jsoncheck",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Check if a buffer starts like a JSON",
   "main": "lib/json.js",
   "type": "module",
